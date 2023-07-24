@@ -5,6 +5,15 @@ import qrcode
 from io import BytesIO
 
 def generate_qr_code(event, context):
+    # Retrieve the S3 bucket and key from the S3 event
+    s3_bucket = event['Records'][0]['s3']['bucket']['name']
+    s3_key = event['Records'][0]['s3']['object']['key']
+
+    # Download the DOCX file from S3
+    s3_client = boto3.client('s3')
+    response = s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
+    docx_file = response['Body'].read()
+    
     # Extract the file from the Lambda event
     file_object = event['file']
 
